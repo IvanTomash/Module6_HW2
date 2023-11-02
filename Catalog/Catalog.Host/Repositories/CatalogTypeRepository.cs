@@ -59,7 +59,7 @@ namespace Catalog.Host.Repositories
                 return removedItem.Entity.Id;
             }
 
-            return 0;
+            return null;
         }
 
         public async Task<int?> Update(int id, string type)
@@ -75,7 +75,7 @@ namespace Catalog.Host.Repositories
                 return item.Id;
             }
 
-            return 0;
+            return null;
         }
     }
 }

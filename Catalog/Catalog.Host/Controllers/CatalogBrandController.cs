@@ -35,7 +35,7 @@ public class CatalogBrandController : ControllerBase
     {
         var result = await _catalogBrandService.Delete(id);
 
-        if (result == 0)
+        if (result == null)
         {
             return NotFound(result);
         }
@@ -49,7 +49,7 @@ public class CatalogBrandController : ControllerBase
     {
         var result = await _catalogBrandService.Update(request.Id, request.Brand);
 
-        if (result == 0)
+        if (result == null)
         {
             return NotFound(result);
         }

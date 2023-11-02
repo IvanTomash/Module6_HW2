@@ -35,7 +35,7 @@ public class CatalogItemController : ControllerBase
     {
         var result = await _catalogItemService.Delete(id);
 
-        if (result == 0)
+        if (result == null)
         {
             return NotFound(result);
         }
@@ -49,7 +49,7 @@ public class CatalogItemController : ControllerBase
     {
         var result = await _catalogItemService.Update(request.Id, request.Name, request.Description, request.Price, request.AvailableStock, request.CatalogBrandId, request.CatalogTypeId, request.PictureFileName);
 
-        if (result == 0)
+        if (result == null)
         {
             return NotFound(result);
         }

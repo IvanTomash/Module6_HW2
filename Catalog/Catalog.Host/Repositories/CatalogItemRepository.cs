@@ -66,7 +66,7 @@ public class CatalogItemRepository : ICatalogItemRepository
             return removedItem.Entity.Id;
         }
 
-        return 0;
+        return null;
     }
 
     public async Task<int?> Update(int id, string name, string description, decimal price, int availableStock, int catalogBrandId, int catalogTypeId, string pictureFileName)
@@ -87,6 +87,6 @@ public class CatalogItemRepository : ICatalogItemRepository
             return item.Id;
         }
 
-        return 0;
+        return null;
     }
 }

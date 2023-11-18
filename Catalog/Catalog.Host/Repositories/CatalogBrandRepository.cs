@@ -20,15 +20,13 @@ namespace Catalog.Host.Repositories
             _logger = logger;
         }
 
-        public async Task<PaginatedItems<CatalogBrand>> GetByPageAsync(int pageIndex, int pageSize)
+        public async Task<PaginatedItems<CatalogBrand>> GetByPageAsync()
         {
             var totalItems = await _dbContext.CatalogBrands
                 .LongCountAsync();
 
             var itemsOnPage = await _dbContext.CatalogBrands
                 .OrderBy(c => c.Id)
-                .Skip(pageSize * pageIndex)
-                .Take(pageSize)
                 .ToListAsync();
 
             return new PaginatedItems<CatalogBrand>() { TotalCount = totalItems, Data = itemsOnPage };

@@ -1,6 +1,7 @@
 using System.Net;
 using Catalog.Host.Data.Entities;
 using Catalog.Host.Models.Dtos;
+using Catalog.Host.Models.Enums;
 using Catalog.Host.Models.Requests;
 using Catalog.Host.Models.Response;
 using Catalog.Host.Services.Interfaces;
@@ -26,16 +27,22 @@ public class CatalogBffController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(typeof(PaginatedItemsResponse<CatalogItemDto>), (int)HttpStatusCode.OK)]
-    public async Task<IActionResult> Items(PaginatedItemsRequest request)
+    public async Task<IActionResult> Items(PaginatedItemsRequest<CatalogTypeFilter> request)
     {
-        var result = await _catalogService.GetCatalogItemsAsync(request.PageSize, request.PageIndex);
+        var result = await _catalogService.GetCatalogItemsAsync(request.PageSize, request.PageIndex, request.Filters);
         return Ok(result);
     }
 
     [HttpPost("{id}")]
-    public async Task<ActionResult<CatalogItemDto>> GetById(int id)
+    public async Task<ActionResult<CatalogItemDto>> GetById(int id, PaginatedItemsRequest<CatalogTypeFilter> request)
     {
-        var paginatedCatalogItemsResponse = await _catalogService.GetCatalogItemsAsync(100, 0);
+        var paginatedCatalogItemsResponse = await _catalogService.GetCatalogItemsAsync(request.PageSize, request.PageIndex, request.Filters);
+
+        if (paginatedCatalogItemsResponse == null)
+        {
+            return StatusCode(StatusCodes.Status404NotFound);
+        }
+
         var items = paginatedCatalogItemsResponse.Data.ToList<CatalogItemDto>();
         try
         {
@@ -56,9 +63,15 @@ public class CatalogBffController : ControllerBase
     }
 
     [HttpPost("{brand}")]
-    public async Task<ActionResult<CatalogItemDto>> GetByBrand(string brand, PaginatedItemsRequest request)
+    public async Task<ActionResult<CatalogItemDto>> GetByBrand(string brand, PaginatedItemsRequest<CatalogTypeFilter> request)
     {
-        var paginatedCatalogItemsResponse = await _catalogService.GetCatalogItemsAsync(request.PageSize, request.PageIndex);
+        var paginatedCatalogItemsResponse = await _catalogService.GetCatalogItemsAsync(request.PageSize, request.PageIndex, request.Filters);
+
+        if (paginatedCatalogItemsResponse == null)
+        {
+            return StatusCode(StatusCodes.Status404NotFound);
+        }
+
         var items = paginatedCatalogItemsResponse.Data.ToList<CatalogItemDto>();
         var result = new List<CatalogItemDto>();
 
@@ -79,9 +92,15 @@ public class CatalogBffController : ControllerBase
     }
 
     [HttpPost("{type}")]
-    public async Task<ActionResult<CatalogItemDto>> GetByType(string type, PaginatedItemsRequest request)
+    public async Task<ActionResult<CatalogItemDto>> GetByType(string type, PaginatedItemsRequest<CatalogTypeFilter> request)
     {
-        var paginatedCatalogItemsResponse = await _catalogService.GetCatalogItemsAsync(request.PageSize, request.PageIndex);
+        var paginatedCatalogItemsResponse = await _catalogService.GetCatalogItemsAsync(request.PageSize, request.PageIndex, request.Filters);
+
+        if (paginatedCatalogItemsResponse == null)
+        {
+            return StatusCode(StatusCodes.Status404NotFound);
+        }
+
         var items = paginatedCatalogItemsResponse.Data.ToList<CatalogItemDto>();
         var result = new List<CatalogItemDto>();
 
@@ -102,16 +121,18 @@ public class CatalogBffController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<List<CatalogBrandDto>>> GetBrands(PaginatedItemsRequest request)
+    [ProducesResponseType(typeof(List<CatalogBrandDto>), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<List<CatalogBrandDto>>> GetBrands()
     {
-        var result = await _catalogService.GetCatalogBrandsAsync(request.PageSize, request.PageIndex);
+        var result = await _catalogService.GetCatalogBrandsAsync();
         return Ok(result);
     }
 
     [HttpPost]
-    public async Task<ActionResult<List<CatalogTypeDto>>> GetTypes(PaginatedItemsRequest request)
+    [ProducesResponseType(typeof(List<CatalogTypeDto>), (int)HttpStatusCode.OK)]
+    public async Task<ActionResult<List<CatalogTypeDto>>> GetTypes()
     {
-        var result = await _catalogService.GetCatalogTypesAsync(request.PageSize, request.PageIndex);
+        var result = await _catalogService.GetCatalogTypesAsync();
         return Ok(result);
     }
 }

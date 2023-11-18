@@ -20,15 +20,25 @@ public class CatalogItemRepository : ICatalogItemRepository
         _logger = logger;
     }
 
-    public async Task<PaginatedItems<CatalogItem>> GetByPageAsync(int pageIndex, int pageSize)
+    public async Task<PaginatedItems<CatalogItem>> GetByPageAsync(int pageIndex, int pageSize, int? brandFilter, int? typeFilter)
     {
-        var totalItems = await _dbContext.CatalogItems
-            .LongCountAsync();
+        IQueryable<CatalogItem> query = _dbContext.CatalogItems;
 
-        var itemsOnPage = await _dbContext.CatalogItems
+        if (brandFilter.HasValue)
+        {
+            query = query.Where(w => w.CatalogBrandId == brandFilter.Value);
+        }
+
+        if (typeFilter.HasValue)
+        {
+            query = query.Where(w => w.CatalogTypeId == typeFilter.Value);
+        }
+
+        var totalItems = await query.LongCountAsync();
+
+        var itemsOnPage = await query.OrderBy(c => c.Name)
             .Include(i => i.CatalogBrand)
             .Include(i => i.CatalogType)
-            .OrderBy(c => c.Name)
             .Skip(pageSize * pageIndex)
             .Take(pageSize)
             .ToListAsync();

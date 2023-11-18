@@ -5,7 +5,7 @@ namespace Catalog.Host.Repositories.Interfaces
 {
     public interface ICatalogTypeRepository
     {
-        Task<PaginatedItems<CatalogType>> GetByPageAsync(int pageIndex, int pageSize);
+        Task<PaginatedItems<CatalogType>> GetByPageAsync();
         Task<int?> Add(string type);
         Task<int?> Delete(int id);
         Task<int?> Update(int id, string type);
